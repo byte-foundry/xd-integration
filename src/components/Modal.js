@@ -40,8 +40,8 @@ module.exports = class Modal extends React.Component {
     }
   }
 
-  async onFormClick(e) {
-    await this.applyStyle();
+  onFormClick(e) {
+    this.applyStyle();
     this.props.dialog.close("ok");
   };
 
