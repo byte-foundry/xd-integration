@@ -10,36 +10,40 @@ const FormModal = styled('div')`
 module.exports = class Modal extends React.Component {
   constructor(props) {
     super(props);
-    this.onDoneClick = (e) => {
-        let text;
-        this.props.selection.items.forEach((node) => {
-            if (node instanceof Text) {
-                if (text) {
-                    text = node;
-                }
+
+    this.applyStyle = this.applyStyle.bind(this);
+    this.onFormClick = this.onFormClick.bind(this);
+  }
+
+  applyStyle() {
+    let text;
+    this.props.selection.items.forEach((node) => {
+        if (node instanceof Text) {
+            if (!text) {
+                text = node;
             }
-        });
-        console.log(text)
-        if (text) {
-            text.styleRanges = [{
-                length: text.text.length,
-                fontFamily: 'Impact',
-                fontStyle: 'Regular',
-                fontSize: 40,
-                charSpacing: 0,
-                underline: false,
-                fill: new Color("#fff")
-            }];
-            text.stroke = new Color("#000");
-            text.strokeEnabled = true;
-            text.strokeWidth = 1;
-            this.props.dialog.close();
         }
-        else {
-            this.props.dialog.close();
-        }
+    });
+    if (text) {
+        text.styleRanges = [{
+            length: text.text.length,
+            fontFamily: 'Impact',
+            fontStyle: 'Regular',
+            fontSize: 40,
+            charSpacing: 0,
+            underline: false,
+            fill: new Color("#fff")
+        }];
+        text.stroke = new Color("#000");
+        text.strokeEnabled = true;
+        text.strokeWidth = 1;
     }
   }
+
+  async onFormClick(e) {
+    await this.applyStyle();
+    this.props.dialog.close("ok");
+  };
 
   render() {
       return (
@@ -47,7 +51,7 @@ module.exports = class Modal extends React.Component {
               <h1>Prototypo integration test</h1>
               <p>On va changer ce style de font</p>
               <footer>
-                  <button type="submit" uxp-variant="cta" onClick={this.onDoneClick}>C'est parti</button>
+                  <button type="submit" uxp-variant="cta" onClick={this.onFormClick}>C'est parti</button>
               </footer>
           </FormModal>
       );

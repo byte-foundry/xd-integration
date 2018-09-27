@@ -18,8 +18,8 @@ function getDialog(selection) {
 
 module.exports = {
     commands: {
-        menuCommand: function (selection) {
-            document.body.appendChild(getDialog(selection)).showModal();
+        menuCommand: async function (selection) {
+            return document.body.appendChild(getDialog(selection)).showModal().finally(() => dialog.remove());
         }
     }
 };

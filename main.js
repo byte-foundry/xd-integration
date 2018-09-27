@@ -22323,34 +22323,39 @@ const FormModal = styled('div')`
 module.exports = class Modal extends React.Component {
     constructor(props) {
         super(props);
-        this.onDoneClick = e => {
-            let text;
-            this.props.selection.items.forEach(node => {
-                if (node instanceof Text) {
-                    if (text) {
-                        text = node;
-                    }
+
+        this.applyStyle = this.applyStyle.bind(this);
+        this.onFormClick = this.onFormClick.bind(this);
+    }
+
+    applyStyle() {
+        let text;
+        this.props.selection.items.forEach(node => {
+            if (node instanceof Text) {
+                if (!text) {
+                    text = node;
                 }
-            });
-            console.log(text);
-            if (text) {
-                text.styleRanges = [{
-                    length: text.text.length,
-                    fontFamily: 'Impact',
-                    fontStyle: 'Regular',
-                    fontSize: 40,
-                    charSpacing: 0,
-                    underline: false,
-                    fill: new Color("#fff")
-                }];
-                text.stroke = new Color("#000");
-                text.strokeEnabled = true;
-                text.strokeWidth = 1;
-                this.props.dialog.close();
-            } else {
-                this.props.dialog.close();
             }
-        };
+        });
+        if (text) {
+            text.styleRanges = [{
+                length: text.text.length,
+                fontFamily: 'Impact',
+                fontStyle: 'Regular',
+                fontSize: 40,
+                charSpacing: 0,
+                underline: false,
+                fill: new Color("#fff")
+            }];
+            text.stroke = new Color("#000");
+            text.strokeEnabled = true;
+            text.strokeWidth = 1;
+        }
+    }
+
+    async onFormClick(e) {
+        await this.applyStyle();
+        this.props.dialog.close("ok");
     }
 
     render() {
@@ -22372,7 +22377,7 @@ module.exports = class Modal extends React.Component {
                 null,
                 React.createElement(
                     "button",
-                    { type: "submit", "uxp-variant": "cta", onClick: this.onDoneClick },
+                    { type: "submit", "uxp-variant": "cta", onClick: this.onFormClick },
                     "C'est parti"
                 )
             )
@@ -22411,8 +22416,8 @@ function getDialog(selection) {
 
 module.exports = {
     commands: {
-        menuCommand: function (selection) {
-            document.body.appendChild(getDialog(selection)).showModal();
+        menuCommand: async function (selection) {
+            return document.body.appendChild(getDialog(selection)).showModal().finally(() => dialog.remove());
         }
     }
 };
